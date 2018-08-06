@@ -1,9 +1,11 @@
 # Monkey-V1-Spikes-Analysis
 
 This code analyzes spike data using the state-space Ising model and generates the figures shown in:
+
 Gaudreault, J., Shimazaki, H.: State-space analysis of an Ising model reveals contributions of pairwise interactions to sparseness, fluctuation, and stimulus coding of monkey V1 neurons. ICANN2018, (2018).
 To generate the figures in that paper, please follow these steps:
 1. Download Smith and Kohn’s data from CRCNS.org:
+
 Smith, M.A., Kohn, A.: Spatial and temporal scales of neuronal correlation in primary visual cortex. Journal of Neuroscience 28(48), 125 91–12603 (2008).
 2. Replace the Matlab data files in “preprocess” with those of the same name downloaded from CRCNS.org.
 3. Run “extract_data_gratings.py”. This extracts the spike timings and the signal to noise ratio and saves them to pickle files usable with Python.
