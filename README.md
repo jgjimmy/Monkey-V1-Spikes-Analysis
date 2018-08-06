@@ -17,4 +17,6 @@ Smith, M.A., Kohn, A.: Spatial and temporal scales of neuronal correlation in pr
 7. Run “quantiles.py” for all monkeys and populations. Do so for original and shuffled data. These options are at the beginning of “quantiles.py”. This computes credible intervals for the macroscopic properties and saves them in the folder “Data_quantiles”.
 8. Generate the figures using “fig1.py”, ‘fig2.py”, “fig3.py” and “fig1_without_quantiles.py”. The figures will be saved in the “Figures” folder.
 
-*The code has been written with Python 3.6.5.
+*The code has been written with Python 3.6.5. The ssll library has been updated to work with Python 3.6.5.
+
+We acknowledge Thomas Sharp and Christian Donner respectively for providing the code for exact inference (from repository <https://github.com/tomxsharp/ssll> or <http://github.com/shimazaki/dynamic_corr> for Matlab code) and approximation methods (from repository <https://github.com/christiando/ssll_lib>).
