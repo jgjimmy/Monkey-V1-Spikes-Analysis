@@ -1,28 +1,33 @@
 """
 
-Traces figure 1 without credible intervals for the entropy, entropy ratio, 
+Traces figure 1 without credible intervals for the entropy, entropy ratio,
 sparseness and heat capacity. "experiments.py"  and "data_fig1.py" must be run
 before this code, so that the macroscopic properties are computed and saved.
 
 ---
 
-This code uses approximate inference methods for State-Space Analysis of Spike
-Correlations previously developped (Shimazaki et al. PLoS Comp Bio 2012) to 
-analyze monkey V1 neurons spiking data (Smith and Kohn, Journal of Neuroscience
-2008). We acknowledge Thomas Sharp and Christian Donner respectively for
-providing the code for exact inference (from repository 
+This code uses State-space Model of Time-varying Neural Interactions previously
+developed (Shimazaki et al. PLoS Comp Biol 2012; Donner et al. PLoS Comp Biol
+2017) to analyze monkey V1 neurons spiking data (Smith and Kohn, Journal of
+Neuroscience 2008). We acknowledge Thomas Sharp and Christian Donner
+respectively for providing codes for the inference method (from repository
 <https://github.com/tomxsharp/ssll> or
-<http://github.com/shimazaki/dynamic_corr> for Matlab code) and approximation 
+<http://github.com/shimazaki/dynamic_corr> for Matlab), and its approximation
 methods (from repository <https://github.com/christiando/ssll_lib>).
 
-In this library we use the existing codes to analyze the contributions of
-pairwise interactions to macroscopic properties of neural populations and
-stimulus coding of monkey V1 neurons. For details see: 
-<https://arxiv.org/abs/1807.08900>.
+In this library, we use the existing codes to analyze contributions of pairwise
+interactions to macroscopic properties of neural populations and stimulus coding
+of monkey V1 neurons. For details see:
+
+Jimmy Gaudreault and Hideaki Shimazaki. (2018) State-space analysis of an Ising
+model reveals contributions of pairwise interactions to sparseness, fluctuation,
+and stimulus coding of monkey V1 neurons. arXiv:1807.08900.
+<https://arxiv.org/abs/1807.08900>
 
 Copyright (C) 2018
 
 Authors of the analysis methods: Jimmy Gaudreault (jimmy.gaudreault@polymtl.ca)
+                                 Christian Donner (christian.donner@bccn-berlin.de)
                                  Hideaki Shimazaki (h.shimazaki@kyoto-u.ac.jp)
 
 This program is free software: you can redistribute it and/or modify
@@ -39,6 +44,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+
 import numpy
 from matplotlib import pyplot
 import matplotlib as mpl
@@ -88,7 +94,7 @@ C = results[6][G]
 C_shuffle = results_shuffle[6][G]
 spikes = results[7][G]
 spikes_shuffle = results_shuffle[7][G]
-N = spikes.shape[2] 
+N = spikes.shape[2]
 T = numpy.size(theta, 0)
 D = numpy.size(theta, 1)
 Total = 1.28
@@ -112,15 +118,15 @@ fig = pyplot.figure(figsize=size_in_inch, dpi=200)
 
 # spikes
 ax = fig.add_axes([0.07,0.5,.25,.4])
-ax.imshow(spikes[:,0,:].transpose(), 'Greys', aspect=2) 
+ax.imshow(spikes[:,0,:].transpose(), 'Greys', aspect=2)
 ax.set_xticks([])
 ax.set_yticks([])
 ax = fig.add_axes([0.06,0.47,.25,.4])
-ax.imshow(spikes[:,1,:].transpose(), 'Greys', aspect=2) 
+ax.imshow(spikes[:,1,:].transpose(), 'Greys', aspect=2)
 ax.set_xticks([])
 ax.set_yticks([])
 ax = fig.add_axes([0.05,0.44,.25,.4])
-ax.imshow(spikes[:,2,:].transpose(), 'Greys', aspect=2) 
+ax.imshow(spikes[:,2,:].transpose(), 'Greys', aspect=2)
 ax.set_xticks([])
 ax.set_yticks([])
 ax.set_ylabel('Unit ID', fontsize=fontsize)
@@ -139,11 +145,11 @@ ax.add_artist(pyplot.Line2D((xmin, xmin), (ymin, ymax), color='black', linewidth
 ax.add_artist(pyplot.Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=1))
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
-ax.set_yticks([.02,.05,.08]) 
-ax.set_xticks([0,1.28]) 
+ax.set_yticks([.02,.05,.08])
+ax.set_xticks([0,1.28])
 ax.set_ylabel('$p_{\\mathrm{spike}}$', fontsize=fontsize)
 ax.yaxis.labelpad = -.05
-pyplot.legend(['Data','Fit','Surrogate-data fit'], frameon=0, fontsize=int(.9*fontsize)) 
+pyplot.legend(['Data','Fit','Surrogate-data fit'], frameon=0, fontsize=int(.9*fontsize))
 ax.set_xlabel('Time [s]', fontsize=fontsize)
 
 # Network
@@ -155,7 +161,7 @@ graph_ax = [fig.add_axes([.315,0.55,.13,.33]),
             fig.add_axes([.42,0.55,.13,.33]),
             fig.add_axes([.525,0.55,.13,.33])]
 
-T_choice = numpy.array([0, 0.1, 0.8]) / dt 
+T_choice = numpy.array([0, 0.1, 0.8]) / dt
 for i, t in enumerate(T_choice):
     t = int(t)
     i = int(i)
@@ -168,11 +174,11 @@ for i, t in enumerate(T_choice):
     G1 = nx.Graph()
     G1.add_nodes_from(range(N))
     G1.add_edges_from(conns)
-    pos1 = nx.circular_layout(G1, scale=0.015) 
+    pos1 = nx.circular_layout(G1, scale=0.015)
     net_nodes = nx.draw_networkx_nodes(G1, pos1, ax=graph_ax[i], node_color=theta[t,:N],
-                                       cmap=pyplot.get_cmap('hot'), vmin=-5,vmax=-1., node_size=25, linewidths=.5) 
+                                       cmap=pyplot.get_cmap('hot'), vmin=-5,vmax=-1., node_size=25, linewidths=.5)
     e1 = nx.draw_networkx_edges(G1, pos1, ax=graph_ax[i], edge_color=theta[t,conn_idx].tolist(),
-                                edge_cmap=pyplot.get_cmap('seismic'),edge_vmin=-1.,edge_vmax=1., width=1) 
+                                edge_cmap=pyplot.get_cmap('seismic'),edge_vmin=-1.,edge_vmax=1., width=1)
     graph_ax[i].axis('off')
     graph_ax[i].set_title('t=%.2f s' %Time[int(T_choice[i])], fontsize=fontsize)
     x0,x1 = graph_ax[i].get_xlim()
@@ -202,7 +208,7 @@ xmin, xmax = ax.get_xaxis().get_view_interval()
 ax.add_artist(pyplot.Line2D((xmin, xmin), (ymin, ymax), color='black', linewidth=1))
 ax.yaxis.set_ticks_position('left')
 ax.set_xticks([])
-ax.set_yticks([-5,-4.4,-3.8]) 
+ax.set_yticks([-5,-4.4,-3.8])
 ax.add_artist(pyplot.Line2D((0, 0), (ymin, ymax), color='black', linewidth=1, linestyle='--'))
 ax.add_artist(pyplot.Line2D((0.1, 0.1), (ymin, ymax), color='black', linewidth=1, linestyle='--'))
 ax.add_artist(pyplot.Line2D((0.8, 0.8), (ymin, ymax), color='black', linewidth=1, linestyle='--'))
@@ -210,7 +216,7 @@ ax.add_artist(pyplot.Line2D((0.8, 0.8), (ymin, ymax), color='black', linewidth=1
 # theta_ij
 ax = fig.add_axes([.35,0.1,.28,.2], frameon=0)
 theta_mean = numpy.mean(theta[:,N:], axis=1)
-theta_mean_shuffle = numpy.mean(theta_shuffle[:,N:], axis=1) 
+theta_mean_shuffle = numpy.mean(theta_shuffle[:,N:], axis=1)
 ax.plot(Time, theta_mean, color=[.3,.3,.3], lw=1)
 ax.plot(Time, theta_mean_shuffle, 'r', lw=1)
 ax.set_ylabel('$\\langle \\theta_{ij} \\rangle_{ij}$', fontsize=fontsize)
@@ -219,7 +225,7 @@ ymin, ymax = ax.get_yaxis().get_view_interval()
 xmin, xmax = ax.get_xaxis().get_view_interval()
 ax.add_artist(pyplot.Line2D((xmin, xmin), (ymin, ymax), color='black', linewidth=1))
 ax.add_artist(pyplot.Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=1))
-ax.set_yticks([-0.2, 0, 0.2]) 
+ax.set_yticks([-0.2, 0, 0.2])
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
 ax.set_xlabel('Time [s]', fontsize=fontsize)
@@ -242,13 +248,13 @@ ax.set_xticks([])
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
 ax.set_ylabel('$S$', fontsize=fontsize)
-ax.set_yticks([2,4,6]) 
+ax.set_yticks([2,4,6])
 
 # Entropy ratio
 S0  = N*numpy.log(2)
 ax = fig.add_axes([.68,0.5,.28,.15])
 ax.set_frame_on(False)
-ax.plot(Time, (S1 - S2)/(S0 - S2)*100, color='k',lw=1) 
+ax.plot(Time, (S1 - S2)/(S0 - S2)*100, color='k',lw=1)
 ax.plot(Time, (S1_shuffle - S2_shuffle)/(S0 - S2_shuffle)*100, color='r', lw=1)
 ymin, ymax = ax.get_yaxis().get_view_interval()
 xmin, xmax = ax.get_xaxis().get_view_interval()
@@ -256,7 +262,7 @@ ax.add_artist(pyplot.Line2D((xmin, xmin), (ymin, ymax), color='black', linewidth
 ax.set_xticks([])
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
-ax.set_yticks([.4,.8,1.2]) 
+ax.set_yticks([.4,.8,1.2])
 ax.set_ylabel('$\\frac{S_{\\mathrm{ind}}-S_{\\mathrm{pair}}}{S_{\\mathrm{0}}-S_{\\mathrm{pair}}}\ [\%]$', fontsize=fontsize)
 
 # p_silence
@@ -284,7 +290,7 @@ ymin, ymax = ax.get_yaxis().get_view_interval()
 xmin, xmax = ax.get_xaxis().get_view_interval()
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
-ax.set_yticks([8,11,14]) 
+ax.set_yticks([8,11,14])
 ax.add_artist(pyplot.Line2D((xmin, xmin), (ax.get_yticks()[0], ymax), color='black', linewidth=1))
 ax.add_artist(pyplot.Line2D((xmin, xmax), (ax.get_yticks()[0], ax.get_yticks()[0]), color='black', linewidth=1))
 ax.set_xticks([0, 1.28])
@@ -310,4 +316,3 @@ if not os.path.exists(directory+'/Figures/'):
    os.makedirs(directory+'/Figures/')
 
 fig.savefig(directory+'/Figures/fig1_m'+str(monkey+1)+'_'+str(orientation)+pop+'.eps')
-

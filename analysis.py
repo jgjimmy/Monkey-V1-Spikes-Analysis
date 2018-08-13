@@ -1,23 +1,27 @@
 """
 
-Various functions to build the spiking time series and fit the state-space 
+Various functions to build the spiking time series and fit the state-space
 Ising model using the ssll library.
 
 ---
 
-This code uses approximate inference methods for State-Space Analysis of Spike
-Correlations previously developped (Shimazaki et al. PLoS Comp Bio 2012) to 
-analyze monkey V1 neurons spiking data (Smith and Kohn, Journal of Neuroscience
-2008). We acknowledge Thomas Sharp and Christian Donner respectively for
-providing the code for exact inference (from repository 
+This code uses State-space Model of Time-varying Neural Interactions previously
+developed (Shimazaki et al. PLoS Comp Biol 2012; Donner et al. PLoS Comp Biol
+2017) to analyze monkey V1 neurons spiking data (Smith and Kohn, Journal of
+Neuroscience 2008). We acknowledge Thomas Sharp and Christian Donner
+respectively for providing codes for the inference method (from repository
 <https://github.com/tomxsharp/ssll> or
-<http://github.com/shimazaki/dynamic_corr> for Matlab code) and approximation 
+<http://github.com/shimazaki/dynamic_corr> for Matlab), and its approximation
 methods (from repository <https://github.com/christiando/ssll_lib>).
 
-In this library we use the existing codes to analyze the contributions of
-pairwise interactions to macroscopic properties of neural populations and
-stimulus coding of monkey V1 neurons. For details see: 
-<https://arxiv.org/abs/1807.08900>.
+In this library, we use the existing codes to analyze contributions of pairwise
+interactions to macroscopic properties of neural populations and stimulus coding
+of monkey V1 neurons. For details see:
+
+Jimmy Gaudreault and Hideaki Shimazaki. (2018) State-space analysis of an Ising
+model reveals contributions of pairwise interactions to sparseness, fluctuation,
+and stimulus coding of monkey V1 neurons. arXiv:1807.08900.
+<https://arxiv.org/abs/1807.08900>
 
 Copyright (C) 2018
 
@@ -51,9 +55,9 @@ sys.path.insert(1,directory + '\ssll_lib')
 import __init__
 
 
-def run_em(orientation, O, monkey, spikes, spike_reverse=False, 
-           spike_shuffle=False, lmbda1=100, lmbda2=100, max_iter=100, 
-           param_est='exact', param_est_eta='exact', stationary='None', 
+def run_em(orientation, O, monkey, spikes, spike_reverse=False,
+           spike_shuffle=False, lmbda1=100, lmbda2=100, max_iter=100,
+           param_est='exact', param_est_eta='exact', stationary='None',
            theta_o=0, sigma_o=0.1, mstep=True, trials='all', pop='',
            save=False):
     """
@@ -62,7 +66,7 @@ def run_em(orientation, O, monkey, spikes, spike_reverse=False,
     gratings at a given orientation. Then, is save is True, creates a pickle
     file with a name containing the index of the monkey, the orientation of
     the stimulus and the type of spike train analyzed (i.e. reversed in time
-    and/or trial shuffled or not). The file is saved in the 'Data' folder 
+    and/or trial shuffled or not). The file is saved in the 'Data' folder
     in the working directory. This folder is created if inexistant.
 
     :param int orientation:
@@ -72,7 +76,7 @@ def run_em(orientation, O, monkey, spikes, spike_reverse=False,
     :param int monkey:
         Index of the monkey to consider (0, 1, 2)
     :param numpy.ndarray spikes
-        Spike train to which the Ising model should be fitted (T,R,N) 
+        Spike train to which the Ising model should be fitted (T,R,N)
     :param boolean spike_reverse:
         If True, the spike train to analyze will be reversed in time
     :param boolean spike_shuffle:
@@ -149,7 +153,7 @@ def get_spike_train(orientation, monkey, neurons, dt=0.01, spike_reverse=False,
     """
     Extracts the spike times form 'gratings_events', then bins the spike train
     of a given monkey for a given set of neurons and a given stimulus orientation.
-    
+
     :param int orientation:
         Orientation of the stimulus to consider (0, 30, 60,..., 330). Only used
         to name the result file.
@@ -173,14 +177,14 @@ def get_spike_train(orientation, monkey, neurons, dt=0.01, spike_reverse=False,
     :returns:
         spike train (T,R,N) as a numpy.ndarray
     """
-    
+
     # Import spiking data
     directory = os.getcwd()
     f = open(directory+'/Preprocess/gratings_events', 'rb')
     events = pickle.load(f) #Time of spikes:[monkey][Neuron, Orientation, Trial]
     f.close()
     # Number of trials
-    R = numpy.size(events[monkey], 2) 
+    R = numpy.size(events[monkey], 2)
     # Total time of the experiment (s)
     Total = 1.28
     # Number of time bins
@@ -206,11 +210,11 @@ def get_spike_train(orientation, monkey, neurons, dt=0.01, spike_reverse=False,
             r_count +=1
             count = -1
             for n in neurons:
-                count +=1            
+                count +=1
                 if numpy.any((spike_timing[n][G][r] > t*dt) & (spike_timing[n][G][r] < t*dt + dt)):
                     spikes[t,r_count,count] = 1
-                
-    if spike_reverse == True:                
+
+    if spike_reverse == True:
         spikes = invert_spikes(spikes)
     if spike_shuffle == True:
         spikes = shuffle_spikes(spikes)
@@ -226,7 +230,7 @@ def invert_spikes(spikes):
 
     :returns:
         spikes_i, spike train inverted in time as a numpy.ndarray (T,R,N)
-        
+
     """
 
     # Get the number of time bins
@@ -241,7 +245,7 @@ def invert_spikes(spikes):
 
 def shuffle_spikes(spikes):
     """
-    Shuffles the data trial-wise. In the shuffled data, for a given trial, 
+    Shuffles the data trial-wise. In the shuffled data, for a given trial,
     each neuron spike train will come from a different trial in the original
     spike train. This should eliminate correlations.
 
