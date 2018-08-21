@@ -87,7 +87,7 @@ N = 12
 dt = 0.01
 
 # First guess for lambda hyperparameter
-lmbda = 10
+lmbda = 100
 
 # Indicate whether exact likelihood ('exact') or pseudo likelihood ('pseudo')
 # should be used

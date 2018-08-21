@@ -73,7 +73,7 @@ if Shuffled:
     b += '_shuffle'
 
 # Number of samples for the computation of the quantiles
-n_samples = 100
+n_samples = 1000
 
 # Desired quantile (percent i.e. qp=1=1%, we exclude 1% of the samples)
 qp = 10
